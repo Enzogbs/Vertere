@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "sqlite" // Para desenvolvimento. Em produção, será "postgresql".
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Note that some adapters may set a maximum length for the String type by default, please ensure your strings are long
+// enough when changing adapters.
+// See https://www.prisma.io/docs/orm/reference/prisma-schema-reference#string for more information
+
+model Session {
+  id            String    @id
+  shop          String
+  state         String
+  isOnline      Boolean   @default(false)
+  scope         String?
+  expires       DateTime?
+  accessToken   String
+  userId        BigInt?
+  firstName     String?
+  lastName      String?
+  email         String?
+  accountOwner  Boolean   @default(false)
+  locale        String?
+  collaborator  Boolean?  @default(false)
+  emailVerified Boolean?  @default(false)
+}
+
+// Nosso modelo customizado para a lógica de negócio do app.
+model Shop {
+  id                    Int      @id @default(autoincrement())
+  shopUrl               String   @unique
+  apiKey                String   @unique @default(cuid())
+  plan                  String   @default("starter")
+  subscriptionChargeId  BigInt?
+  accessToken           String
+  subscriptionStatus    String?  @default("pending")
+  currentUsage          Int      @default(0)
+  usageLimit            Int      @default(2500)
+  usageResetDate        DateTime @default(now())
+  filters               String?
+  sorts                 String?
+  searchLogs         SearchLog[]
+}
+
+model SearchLog {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  shopId        Int   // Chave estrangeira para o Shop
+  shop          Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  originalQuery String
+  returnedJson  String
+}

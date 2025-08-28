@@ -1,0 +1,22 @@
+// extensions/[seu-nome]/blocks/vertere-search.liquid
+<script 
+    src="{{ 'vertere-snippet.js' | asset_url }}" 
+    defer="defer" 
+    data-api-key="{{ block.settings.api_key }}"
+    data-api-url="{{ 'https://5f5127cb1801.ngrok-free.app/api/translate'}}"
+></script>
+
+{% schema %}
+{
+  "name": "Vertere AI Search Logic",
+  "target": "body",
+  "settings": [
+    {
+      "type": "text",
+      "id": "api_key",
+      "label": "Vertere API Key (auto-filled)",
+      "info": "Do not change this field."
+    }
+  ]
+}
+{% endschema %}
